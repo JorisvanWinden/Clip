@@ -88,6 +88,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 
 		public SendClipboardTask(Activity a) {
 			this.activity = a;
+			Toast.makeText(activity, "Sending to " + spinnerData.getItem(spinner.getSelectedItemPosition()), Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
@@ -103,7 +104,6 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			Toast.makeText(activity, "Sending to " + spinnerData.getItem(spinner.getSelectedItemPosition()), Toast.LENGTH_SHORT).show();
 			return null;
 		}
 
@@ -114,5 +114,6 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 			out.flush();
 			out.close();
 		}
+
 	}
 }
