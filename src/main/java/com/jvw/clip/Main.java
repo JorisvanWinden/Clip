@@ -28,20 +28,20 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 	private ArrayAdapter<String> spinnerData;
 	private Spinner spinner;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
 
-	    Button send = (Button) findViewById(R.id.clip_send_button);
-	    spinner = (Spinner) findViewById(R.id.clip_dest_spinner);
-	    spinnerData = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
-	    clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
+		Button send = (Button) findViewById(R.id.clip_send_button);
+		spinner = (Spinner) findViewById(R.id.clip_dest_spinner);
+		spinnerData = new ArrayAdapter<String>(this, R.layout.activity_main_spinner);
+		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 
-	    spinner.setAdapter(spinnerData);
-	    spinnerData.add("192.168.1.39");
-	    send.setOnClickListener(this);
-    }
+		spinner.setAdapter(spinnerData);
+		spinnerData.add("192.168.1.39");
+		send.setOnClickListener(this);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
