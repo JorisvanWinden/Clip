@@ -16,6 +16,15 @@
 		android:layout_alignParentLeft="true"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentStart="true"
-		android:layout_alignParentTop="true"
+		android:layout_alignParentTop="false"
+		android:layout_below="@+id/clip_dest_spinner"
 		android:text="@string/send"/>
+
+	<Spinner
+		android:id="@+id/clip_dest_spinner"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:layout_alignParentTop="true"/>
 </RelativeLayout>
