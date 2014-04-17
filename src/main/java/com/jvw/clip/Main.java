@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 
 	private ClipboardManager clipBoard;
 	private ArrayAdapter<String> spinnerData;
+	private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +34,11 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
 
 	    Button send = (Button) findViewById(R.id.clip_send_button);
-	    Spinner dest = (Spinner) findViewById(R.id.clip_dest_spinner);
+	    spinner = (Spinner) findViewById(R.id.clip_dest_spinner);
 	    spinnerData = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
 	    clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 
-	    dest.setAdapter(spinnerData);
+	    spinner.setAdapter(spinnerData);
 	    spinnerData.add("192.168.1.39");
 	    send.setOnClickListener(this);
     }
@@ -68,6 +70,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 						spinnerData.add(edit.getText().toString());
 					}
 				});
+				builder.show();
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -76,10 +79,16 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		new SendClipboardTask().execute();
+		new SendClipboardTask(this).execute();
 	}
 
 	private class SendClipboardTask extends AsyncTask<Void, Void, Void> {
+
+		private Activity activity;
+
+		public SendClipboardTask(Activity a) {
+			this.activity = a;
+		}
 
 		@Override
 		protected Void doInBackground(Void... params) {
@@ -94,6 +103,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			Toast.makeText(activity, "Sending to " + spinnerData.getItem(spinner.getSelectedItemPosition()), Toast.LENGTH_SHORT).show();
 			return null;
 		}
 
