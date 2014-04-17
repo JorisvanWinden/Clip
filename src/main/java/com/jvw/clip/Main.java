@@ -1,8 +1,10 @@
 package com.jvw.clip;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -11,8 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -22,6 +24,7 @@ import java.net.Socket;
 public class Main extends ActionBarActivity implements View.OnClickListener {
 
 	private ClipboardManager clipBoard;
+	private ArrayAdapter<String> spinnerData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +33,10 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 
 	    Button send = (Button) findViewById(R.id.clip_send_button);
 	    Spinner dest = (Spinner) findViewById(R.id.clip_dest_spinner);
-	    ArrayAdapter<String> spinnerData = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+	    spinnerData = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
 	    clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 
+	    dest.setAdapter(spinnerData);
 	    spinnerData.add("192.168.1.39");
 	    send.setOnClickListener(this);
     }
@@ -47,7 +51,23 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.clip_add_menu:
-				Toast.makeText(this, "Add button clicked", Toast.LENGTH_SHORT).show();
+				final View v = getLayoutInflater().inflate(R.layout.dialog_add_dest, null);
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle("Add ip address");
+				builder.setView(v);
+				builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+				builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						EditText edit = (EditText) v.findViewById(R.id.add_dest_input_edittext);
+						spinnerData.add(edit.getText().toString());
+					}
+				});
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
