@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -54,6 +55,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 		switch (item.getItemId()) {
 			case R.id.clip_add_menu:
 				final View v = getLayoutInflater().inflate(R.layout.dialog_add_dest, null);
+				final EditText edit = (EditText) v.findViewById(R.id.add_dest_input_edittext);
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle("Add ip address");
 				builder.setView(v);
@@ -66,7 +68,6 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 				builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						EditText edit = (EditText) v.findViewById(R.id.add_dest_input_edittext);
 						spinnerData.add(edit.getText().toString());
 					}
 				});
@@ -82,37 +83,57 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 		new SendClipboardTask(this).execute();
 	}
 
-	private class SendClipboardTask extends AsyncTask<Void, Void, Void> {
+	private class SendClipboardTask extends AsyncTask<Void, Void, Boolean> {
 
 		private Activity activity;
+		private String dest;
 
 		public SendClipboardTask(Activity a) {
 			this.activity = a;
-			Toast.makeText(activity, "Sending to " + spinnerData.getItem(spinner.getSelectedItemPosition()), Toast.LENGTH_SHORT).show();
+			this.dest = spinnerData.getItem(spinner.getSelectedItemPosition());
+			Toast.makeText(activity, "Sending to " + dest, Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
-		protected Void doInBackground(Void... params) {
+		protected Boolean doInBackground(Void... params) {
+			boolean response = false;
 			try {
-				if (clipBoard.hasPrimaryClip()) {
+				if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
 					if (clipBoard.getPrimaryClip().getItemCount() > 0) {
 						ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
-						String s = item.getText().toString();
-						send(s);
+						String s = "";
+						if (item.getText() != null) {
+							s = item.getText().toString();
+						}
+
+						response = send(s);
 					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return null;
+			return response;
 		}
 
-		private void send(String s) throws IOException {
-			Socket socket = new Socket("192.168.1.39", 60607);
+		@Override
+		protected void onPostExecute(Boolean aBoolean) {
+			if (aBoolean) {
+				Toast.makeText(activity, "Clipboard sent!", Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(activity, "Unable to connect to " + dest, Toast.LENGTH_SHORT).show();
+			}
+		}
+
+		private boolean send(String s) throws IOException {
+			Socket socket = new Socket(dest, 60607);
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+			DataInputStream in = new DataInputStream(socket.getInputStream());
 			out.writeUTF(s);
 			out.flush();
+			boolean result = in.readBoolean();
 			out.close();
+			in.close();
+			return result;
 		}
 
 	}
