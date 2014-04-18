@@ -61,7 +61,8 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		switch (item.getItemId()) {
 			case R.id.clip_add_menu:
 				final View v = getLayoutInflater().inflate(R.layout.dialog_add_dest, null);
-				final EditText edit = (EditText) v.findViewById(R.id.add_dest_input_edittext);
+				final EditText ipEdit = (EditText) v.findViewById(R.id.add_dest_ip_edittext);
+				final EditText nameEdit = (EditText) v.findViewById(R.id.add_dest_name_edittext);
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle("Add ip address");
 				builder.setView(v);
@@ -74,7 +75,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 				builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						spinnerData.add(new DestinationListItem("Dinges1", edit.getText().toString()));
+						spinnerData.add(new DestinationListItem(nameEdit.getText().toString(), ipEdit.getText().toString()));
 					}
 				});
 				builder.show();

@@ -7,7 +7,13 @@
               android:padding="16dp">
 
 	<EditText
-		android:id="@+id/add_dest_input_edittext"
+		android:id="@+id/add_dest_name_edittext"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="John's PC"/>
+
+	<EditText
+		android:id="@+id/add_dest_ip_edittext"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:ems="10"
