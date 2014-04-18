@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class Main extends ActionBarActivity implements View.OnClickListener {
 
 	private ClipboardManager clipBoard;
 	private ArrayAdapter<DestinationListItem> spinnerData;
@@ -101,15 +100,6 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		new SendClipboardTask(this).execute();
 	}
 
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-	}
-
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-
-	}
 
 	private class SendClipboardTask extends AsyncTask<Void, Void, Boolean> {
 
