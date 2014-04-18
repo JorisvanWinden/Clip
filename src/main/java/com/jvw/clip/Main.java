@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,10 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Main extends ActionBarActivity implements View.OnClickListener {
+public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
 	private ClipboardManager clipBoard;
-	private ArrayAdapter<String> spinnerData;
+	private ArrayAdapter<DestinationListItem> spinnerData;
 	private Spinner spinner;
 
 	@Override
@@ -40,11 +41,12 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 
 		Button send = (Button) findViewById(R.id.clip_send_button);
 		spinner = (Spinner) findViewById(R.id.clip_dest_spinner);
-		spinnerData = new ArrayAdapter<String>(this, R.layout.activity_main_spinner);
+		spinnerData = new ArrayAdapter<DestinationListItem>(this, R.layout.activity_main_spinner);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 
 		spinner.setAdapter(spinnerData);
-		spinnerData.add("192.168.1.39");
+		spinner.setOnItemSelectedListener(this);
+		spinnerData.add(new DestinationListItem("Pc Joris", "192.168.1.39"));
 		send.setOnClickListener(this);
 	}
 
@@ -72,7 +74,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 				builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						spinnerData.add(edit.getText().toString());
+						spinnerData.add(new DestinationListItem("Dinges1", edit.getText().toString()));
 					}
 				});
 				builder.show();
@@ -81,7 +83,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 				Intent intent = new Intent(this, Test.class);
 				List<String> dataList = new ArrayList<String>();
 				for (int i = 0; i < spinnerData.getCount(); i++) {
-					dataList.add(spinnerData.getItem(i));
+					dataList.add(spinnerData.getItem(i).getIp());
 				}
 				String[] data = dataList.toArray(new String[dataList.size()]);
 				intent.putExtra("ClipServers", data);
@@ -98,6 +100,16 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 		new SendClipboardTask(this).execute();
 	}
 
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+
+	}
+
 	private class SendClipboardTask extends AsyncTask<Void, Void, Boolean> {
 
 		private Activity activity;
@@ -105,7 +117,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 
 		public SendClipboardTask(Activity a) {
 			this.activity = a;
-			this.dest = spinnerData.getItem(spinner.getSelectedItemPosition());
+			this.dest = spinnerData.getItem(spinner.getSelectedItemPosition()).getIp();
 			Toast.makeText(activity, "Sending to " + dest, Toast.LENGTH_SHORT).show();
 		}
 
