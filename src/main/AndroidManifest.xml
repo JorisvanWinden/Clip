@@ -21,11 +21,10 @@
         </activity>
 		<activity
 			android:name="com.jvw.clip.Test"
-			android:label="@string/title_activity_test"
-			android:parentActivityName="com.jvw.clip.Main">
-			<meta-data
+			android:label="@string/title_activity_test">
+		<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
-				android:value="Main"/>
+				android:value="com.jvw.clip.Main"/>
 		</activity>
     </application>
 
