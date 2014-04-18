@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -23,8 +22,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Main extends ActionBarActivity implements View.OnClickListener {
@@ -42,9 +39,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 		spinner = (Spinner) findViewById(R.id.clip_dest_spinner);
 		spinnerData = new ArrayAdapter<DestinationListItem>(this, R.layout.activity_main_spinner);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
-
 		spinner.setAdapter(spinnerData);
-		spinner.setOnItemSelectedListener(this);
 		spinnerData.add(new DestinationListItem("Pc Joris", "192.168.1.39"));
 		send.setOnClickListener(this);
 	}
@@ -79,17 +74,6 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 				});
 				builder.show();
 				return true;
-			case R.id.clip_test_connection:
-				Intent intent = new Intent(this, Test.class);
-				List<String> dataList = new ArrayList<String>();
-				for (int i = 0; i < spinnerData.getCount(); i++) {
-					dataList.add(spinnerData.getItem(i).getIp());
-				}
-				String[] data = dataList.toArray(new String[dataList.size()]);
-				intent.putExtra("ClipServers", data);
-				startActivity(intent);
-
-
 			default:
 				return super.onOptionsItemSelected(item);
 		}

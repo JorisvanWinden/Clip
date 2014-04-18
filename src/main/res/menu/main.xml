@@ -4,7 +4,4 @@
 	<item
 		android:id="@+id/clip_add_menu"
 		android:title="Add"/>
-	<item
-		android:id="@+id/clip_test_connection"
-		android:title="Check connection"/>
 </menu>
