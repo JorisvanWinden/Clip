@@ -11,10 +11,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.DataInputStream;
@@ -24,11 +27,15 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 
-public class Main extends ActionBarActivity implements View.OnClickListener {
+public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
 	private ClipboardManager clipBoard;
 	private ArrayAdapter<DestinationListItem> spinnerData;
 	private Spinner spinner;
+	private RelativeLayout infoLayout;
+	private TextView nameInfo;
+	private TextView ipInfo;
+	private TextView portInfo;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,12 +43,20 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 		setContentView(R.layout.activity_main);
 
 		Button send = (Button) findViewById(R.id.clip_send_button);
+		Button test = (Button) findViewById(R.id.clip_info_test_button);
 		spinner = (Spinner) findViewById(R.id.clip_dest_spinner);
+		infoLayout = (RelativeLayout) findViewById(R.id.clip_info_layout);
+		nameInfo = (TextView) findViewById(R.id.clip_info_name_textview);
+		ipInfo = (TextView) findViewById(R.id.clip_info_ip_textview);
+		portInfo = (TextView) findViewById(R.id.clip_info_port_textview);
+
 		spinnerData = new ArrayAdapter<DestinationListItem>(this, R.layout.activity_main_spinner);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 		spinner.setAdapter(spinnerData);
+		spinner.setOnItemSelectedListener(this);
 		spinnerData.add(new DestinationListItem("Pc Joris", "192.168.1.39"));
 		send.setOnClickListener(this);
+		test.setOnClickListener(this);
 	}
 
 	@Override
@@ -81,7 +96,27 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		new SendClipboardTask(this).execute();
+		switch (v.getId()) {
+			case R.id.clip_send_button:
+				new SendClipboardTask(this).execute();
+				break;
+			case R.id.clip_info_test_button:
+
+				break;
+		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		DestinationListItem item = spinnerData.getItem(position);
+		nameInfo.setText("Name: " + item.getName());
+		ipInfo.setText("IP: " + item.getIp());
+		portInfo.setText("Port: " + "60607");
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		infoLayout.setVisibility(View.INVISIBLE);
 	}
 
 
@@ -144,4 +179,5 @@ public class Main extends ActionBarActivity implements View.OnClickListener {
 		}
 
 	}
+
 }
