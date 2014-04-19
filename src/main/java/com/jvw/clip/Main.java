@@ -23,12 +23,16 @@ import android.widget.Toast;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.nio.channels.SocketChannel;
 
 
 public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
+	public static final int UNABLE_TO_CONNECT = 0;
+	public static final int CLIPBOARD_EMPTY = 1;
+	public static final int cLIPBOARD_SENT = 2;
 	private ClipboardManager clipBoard;
 	private ArrayAdapter<DestinationListItem> spinnerData;
 	private Spinner spinner;
@@ -36,6 +40,30 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	private TextView nameInfo;
 	private TextView ipInfo;
 	private TextView portInfo;
+
+	public static boolean send(String dest, int port, int timeout, String msg) {
+		boolean result = false;
+		try {
+			SocketChannel channel = SocketChannel.open();
+			channel.configureBlocking(false);
+			channel.connect(new InetSocketAddress(dest, port));
+			Thread.sleep(timeout);
+			if (!channel.finishConnect()) return false;
+			channel.configureBlocking(true);
+			Socket socket = channel.socket();
+			DataInputStream in = new DataInputStream(socket.getInputStream());
+			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+			result = in.readBoolean();
+			out.writeUTF(msg);
+			in.close();
+			out.close();
+			socket.close();
+			channel.close();
+		} catch (InterruptedException | IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +129,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 				new SendClipboardTask(this).execute();
 				break;
 			case R.id.clip_info_test_button:
-
+				new TestDestinationTask(this).execute(spinnerData.getItem(spinner.getSelectedItemPosition()).getIp());
 				break;
 		}
 	}
@@ -119,7 +147,6 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		infoLayout.setVisibility(View.INVISIBLE);
 	}
 
-
 	private class SendClipboardTask extends AsyncTask<Void, Void, Boolean> {
 
 		private Activity activity;
@@ -133,23 +160,18 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			boolean response = false;
-			try {
-				if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
-					if (clipBoard.getPrimaryClip().getItemCount() > 0) {
-						ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
-						String s = "";
-						if (item.getText() != null) {
-							s = item.getText().toString();
-						}
-
-						response = send(s);
+			if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
+				if (clipBoard.getPrimaryClip().getItemCount() > 0) {
+					ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
+					String s = "";
+					if (item.getText() != null) {
+						s = item.getText().toString();
 					}
+
+					return send(dest, 60607, 2000, s);
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
-			return response;
+			return false;
 		}
 
 		@Override
@@ -161,23 +183,51 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 			}
 		}
 
-		private boolean send(String s) throws IOException {
-			boolean result = false;
-			try {
-				Socket socket = new Socket(dest, 60607);
-				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-				DataInputStream in = new DataInputStream(socket.getInputStream());
-				out.writeUTF(s);
-				out.flush();
-				result = in.readBoolean();
-				out.close();
-				in.close();
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			}
-			return result;
-		}
-
 	}
 
+	private class TestDestinationTask extends AsyncTask<String, Void, Boolean> {
+
+		private Activity activity;
+
+		public TestDestinationTask(Activity activity) {
+			this.activity = activity;
+		}
+
+		@Override
+		protected Boolean doInBackground(String... params) {
+			String dest = params[0];
+			return send(dest, 60607, 2000, "Test");
+		}
+
+		@Override
+		protected void onPostExecute(Boolean aBoolean) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+			if (aBoolean) {
+				builder.setTitle("Server is up and running!");
+				builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+			} else {
+				builder.setTitle("Unable to connect to server");
+				builder.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						spinnerData.remove(spinnerData.getItem(spinner.getSelectedItemPosition()));
+						spinnerData.notifyDataSetChanged();
+					}
+				});
+				builder.setNegativeButton("Keep", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+			}
+
+			builder.show();
+		}
+	}
 }
