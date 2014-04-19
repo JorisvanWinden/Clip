@@ -125,7 +125,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.clip_send_button:
-				new SendClipboardTask(this).execute();
+				new SendClipboardTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute();
 				break;
 			case R.id.clip_info_test_button:
 				new TestDestinationTask(this).execute(spinnerData.getItem(spinner.getSelectedItemPosition()).getIp());
@@ -146,27 +146,28 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		infoLayout.setVisibility(View.INVISIBLE);
 	}
 
-	private class SendClipboardTask extends AsyncTask<String, Void, Integer> {
+	private class SendClipboardTask extends AsyncTask<Void, Void, Integer> {
 
 		private Activity activity;
+		private DestinationListItem destination;
 
-		public SendClipboardTask(Activity a) {
+		public SendClipboardTask(Activity a, DestinationListItem destination) {
 			this.activity = a;
-			Toast.makeText(activity, "Sending clipboard", Toast.LENGTH_SHORT).show();
+			this.destination = destination;
+			Toast.makeText(activity, "Sending clipboard to " + destination.getName(), Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
-		protected Integer doInBackground(String... params) {
-			String dest = params[0];
+		protected Integer doInBackground(Void... params) {
 			if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
 				if (clipBoard.getPrimaryClip().getItemCount() > 0) {
 					ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
-					String s = "";
+					String msg = "";
 					if (item.getText() != null) {
-						s = item.getText().toString();
+						msg = item.getText().toString();
 					}
 
-					return send(dest, 60607, 2000, s);
+					return send(destination.getIp(), 60607, 2000, msg);
 				}
 			}
 			return CLIPBOARD_EMPTY;
@@ -177,7 +178,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 			if (status == CLIPBOARD_SENT) {
 				Toast.makeText(activity, "Clipboard sent!", Toast.LENGTH_SHORT).show();
 			} else if (status == UNABLE_TO_CONNECT) {
-				Toast.makeText(activity, "Unable to connect", Toast.LENGTH_SHORT).show();
+				Toast.makeText(activity, "Unable to connect to " + destination.getIp(), Toast.LENGTH_SHORT).show();
 			} else if (status == CLIPBOARD_EMPTY) {
 				Toast.makeText(activity, "Clipboard is empty", Toast.LENGTH_SHORT).show();
 			}
@@ -226,7 +227,6 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 					}
 				});
 			}
-
 			builder.show();
 		}
 	}
