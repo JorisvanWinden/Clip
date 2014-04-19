@@ -33,6 +33,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	public static final int UNABLE_TO_CONNECT = 0;
 	public static final int CLIPBOARD_EMPTY = 1;
 	public static final int CLIPBOARD_SENT = 2;
+	public static final int INVALID_PORT_IP = 3;
 	private ClipboardManager clipBoard;
 	private ArrayAdapter<DestinationListItem> spinnerData;
 	private Spinner spinner;
@@ -45,7 +46,12 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		try {
 			SocketChannel channel = SocketChannel.open();
 			channel.configureBlocking(false);
-			channel.connect(new InetSocketAddress(ip, port));
+			try {
+				channel.connect(new InetSocketAddress(ip, port));
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				return INVALID_PORT_IP;
+			}
 			try {
 				Thread.sleep(timeout);
 			} catch (InterruptedException e) {
@@ -189,6 +195,8 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 				Toast.makeText(activity, "Unable to connect to " + destination.getIp(), Toast.LENGTH_SHORT).show();
 			} else if (status == CLIPBOARD_EMPTY) {
 				Toast.makeText(activity, "Clipboard is empty", Toast.LENGTH_SHORT).show();
+			} else if (status == INVALID_PORT_IP) {
+				Toast.makeText(activity, "Invalid port number or ip address", Toast.LENGTH_SHORT).show();
 			}
 		}
 
