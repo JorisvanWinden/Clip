@@ -32,7 +32,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 
 	public static final int UNABLE_TO_CONNECT = 0;
 	public static final int CLIPBOARD_EMPTY = 1;
-	public static final int cLIPBOARD_SENT = 2;
+	public static final int CLIPBOARD_SENT = 2;
 	private ClipboardManager clipBoard;
 	private ArrayAdapter<DestinationListItem> spinnerData;
 	private Spinner spinner;
@@ -41,19 +41,18 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	private TextView ipInfo;
 	private TextView portInfo;
 
-	public static boolean send(String dest, int port, int timeout, String msg) {
-		boolean result = false;
+	public static int send(String dest, int port, int timeout, String msg) {
 		try {
 			SocketChannel channel = SocketChannel.open();
 			channel.configureBlocking(false);
 			channel.connect(new InetSocketAddress(dest, port));
 			Thread.sleep(timeout);
-			if (!channel.finishConnect()) return false;
+			if (!channel.finishConnect()) return UNABLE_TO_CONNECT;
 			channel.configureBlocking(true);
 			Socket socket = channel.socket();
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			result = in.readBoolean();
+			boolean result = in.readBoolean();
 			out.writeUTF(msg);
 			in.close();
 			out.close();
@@ -62,7 +61,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		} catch (InterruptedException | IOException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return CLIPBOARD_SENT;
 	}
 
 	@Override
@@ -147,19 +146,18 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		infoLayout.setVisibility(View.INVISIBLE);
 	}
 
-	private class SendClipboardTask extends AsyncTask<Void, Void, Boolean> {
+	private class SendClipboardTask extends AsyncTask<String, Void, Integer> {
 
 		private Activity activity;
-		private String dest;
 
 		public SendClipboardTask(Activity a) {
 			this.activity = a;
-			this.dest = spinnerData.getItem(spinner.getSelectedItemPosition()).getIp();
-			Toast.makeText(activity, "Sending to " + dest, Toast.LENGTH_SHORT).show();
+			Toast.makeText(activity, "Sending clipboard", Toast.LENGTH_SHORT).show();
 		}
 
 		@Override
-		protected Boolean doInBackground(Void... params) {
+		protected Integer doInBackground(String... params) {
+			String dest = params[0];
 			if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
 				if (clipBoard.getPrimaryClip().getItemCount() > 0) {
 					ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
@@ -171,21 +169,23 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 					return send(dest, 60607, 2000, s);
 				}
 			}
-			return false;
+			return CLIPBOARD_EMPTY;
 		}
 
 		@Override
-		protected void onPostExecute(Boolean aBoolean) {
-			if (aBoolean) {
+		protected void onPostExecute(Integer status) {
+			if (status == CLIPBOARD_SENT) {
 				Toast.makeText(activity, "Clipboard sent!", Toast.LENGTH_SHORT).show();
-			} else {
-				Toast.makeText(activity, "Unable to connect to " + dest, Toast.LENGTH_SHORT).show();
+			} else if (status == UNABLE_TO_CONNECT) {
+				Toast.makeText(activity, "Unable to connect", Toast.LENGTH_SHORT).show();
+			} else if (status == CLIPBOARD_EMPTY) {
+				Toast.makeText(activity, "Clipboard is empty", Toast.LENGTH_SHORT).show();
 			}
 		}
 
 	}
 
-	private class TestDestinationTask extends AsyncTask<String, Void, Boolean> {
+	private class TestDestinationTask extends AsyncTask<String, Void, Integer> {
 
 		private Activity activity;
 
@@ -194,15 +194,15 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		}
 
 		@Override
-		protected Boolean doInBackground(String... params) {
+		protected Integer doInBackground(String... params) {
 			String dest = params[0];
 			return send(dest, 60607, 2000, "Test");
 		}
 
 		@Override
-		protected void onPostExecute(Boolean aBoolean) {
+		protected void onPostExecute(Integer status) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-			if (aBoolean) {
+			if (status == CLIPBOARD_SENT) {
 				builder.setTitle("Server is up and running!");
 				builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
 					@Override
