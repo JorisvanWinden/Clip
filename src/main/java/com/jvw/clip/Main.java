@@ -41,12 +41,16 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	private TextView ipInfo;
 	private TextView portInfo;
 
-	public static int send(String dest, int port, int timeout, String msg) {
+	public static int send(String ip, int port, int timeout, String msg) {
 		try {
 			SocketChannel channel = SocketChannel.open();
 			channel.configureBlocking(false);
-			channel.connect(new InetSocketAddress(dest, port));
-			Thread.sleep(timeout);
+			channel.connect(new InetSocketAddress(ip, port));
+			try {
+				Thread.sleep(timeout);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			if (!channel.finishConnect()) return UNABLE_TO_CONNECT;
 			channel.configureBlocking(true);
 			Socket socket = channel.socket();
@@ -58,7 +62,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 			out.close();
 			socket.close();
 			channel.close();
-		} catch (InterruptedException | IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return CLIPBOARD_SENT;
@@ -128,7 +132,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 				new SendClipboardTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute();
 				break;
 			case R.id.clip_info_test_button:
-				new TestDestinationTask(this).execute(spinnerData.getItem(spinner.getSelectedItemPosition()).getIp());
+				new TestDestinationTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute();
 				break;
 		}
 	}
@@ -186,18 +190,19 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 
 	}
 
-	private class TestDestinationTask extends AsyncTask<String, Void, Integer> {
+	private class TestDestinationTask extends AsyncTask<Void, Void, Integer> {
 
 		private Activity activity;
+		private DestinationListItem destination;
 
-		public TestDestinationTask(Activity activity) {
+		public TestDestinationTask(Activity activity, DestinationListItem destination) {
 			this.activity = activity;
+			this.destination = destination;
 		}
 
 		@Override
-		protected Integer doInBackground(String... params) {
-			String dest = params[0];
-			return send(dest, 60607, 2000, "Test");
+		protected Integer doInBackground(Void... params) {
+			return send(destination.getIp(), 60607, 2000, "Test");
 		}
 
 		@Override
