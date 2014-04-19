@@ -85,7 +85,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 		spinner.setAdapter(spinnerData);
 		spinner.setOnItemSelectedListener(this);
-		spinnerData.add(new DestinationListItem("Pc Joris", "192.168.1.39"));
+		spinnerData.add(new DestinationListItem("Pc Joris", "192.168.1.39", 60607));
 		send.setOnClickListener(this);
 		test.setOnClickListener(this);
 	}
@@ -115,7 +115,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 				builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						spinnerData.add(new DestinationListItem(nameEdit.getText().toString(), ipEdit.getText().toString()));
+						spinnerData.add(new DestinationListItem(nameEdit.getText().toString(), ipEdit.getText().toString(), 60607));
 					}
 				});
 				builder.show();
@@ -171,7 +171,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 						msg = item.getText().toString();
 					}
 
-					return send(destination.getIp(), 60607, 2000, msg);
+					return send(destination.getIp(), destination.getPort(), 2000, msg);
 				}
 			}
 			return CLIPBOARD_EMPTY;
@@ -202,7 +202,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 
 		@Override
 		protected Integer doInBackground(Void... params) {
-			return send(destination.getIp(), 60607, 2000, "Test");
+			return send(destination.getIp(), destination.getPort(), 2000, "Test");
 		}
 
 		@Override
