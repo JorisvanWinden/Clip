@@ -19,4 +19,12 @@
 		android:ems="10"
 		android:hint="@string/example_ip"
 		android:inputType="text"/>
+
+	<EditText
+		android:id="@+id/add_dest_port_edittext"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:ems="10"
+		android:hint="60607"
+		android:inputType="number"/>
 </LinearLayout>

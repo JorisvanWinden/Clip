@@ -103,6 +103,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 				final View v = getLayoutInflater().inflate(R.layout.dialog_add_dest, null);
 				final EditText ipEdit = (EditText) v.findViewById(R.id.add_dest_ip_edittext);
 				final EditText nameEdit = (EditText) v.findViewById(R.id.add_dest_name_edittext);
+				final EditText portEdit = (EditText) v.findViewById(R.id.add_dest_port_edittext);
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle("Add ip address");
 				builder.setView(v);
@@ -115,7 +116,10 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 				builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						spinnerData.add(new DestinationListItem(nameEdit.getText().toString(), ipEdit.getText().toString(), 60607));
+						String name = nameEdit.getText().toString();
+						String ip = ipEdit.getText().toString();
+						int port = Integer.parseInt(portEdit.getText().toString());
+						spinnerData.add(new DestinationListItem(name, ip, port));
 					}
 				});
 				builder.show();
@@ -142,7 +146,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		DestinationListItem item = spinnerData.getItem(position);
 		nameInfo.setText("Name: " + item.getName());
 		ipInfo.setText("IP: " + item.getIp());
-		portInfo.setText("Port: " + "60607");
+		portInfo.setText("Port: " + item.getPort());
 	}
 
 	@Override
