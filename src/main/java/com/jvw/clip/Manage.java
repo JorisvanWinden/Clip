@@ -12,10 +12,14 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Manage extends ActionBarActivity {
 
 	private ViewGroup layout;
+	private List<DestinationListItem> data = new ArrayList<DestinationListItem>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +43,12 @@ public class Manage extends ActionBarActivity {
 		view.findViewById(R.id.manage_remove_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				layout.removeView(view);
+				int position = layout.indexOfChild(view);
+				layout.removeViewAt(position);
+				data.remove(position);
 			}
 		});
+		data.add(new DestinationListItem(name, ip, port));
 		layout.addView(view, 0);
 	}
 
