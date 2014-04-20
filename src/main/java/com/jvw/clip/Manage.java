@@ -32,10 +32,11 @@ public class Manage extends ActionBarActivity {
 		return true;
 	}
 
-	private void addItem(String name) {
+	private void addItem(String name, String ip, int port) {
 		final ViewGroup view = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.manage_item, layout, false);
 		((TextView) view.findViewById(R.id.manage_name_textview)).setText(name);
-		view.findViewById(R.id.manage_delete_button).setOnClickListener(new View.OnClickListener() {
+		((TextView) view.findViewById(R.id.manage_ip_port_textview)).setText(ip + ":" + port);
+		view.findViewById(R.id.manage_remove_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				layout.removeView(view);
@@ -67,7 +68,7 @@ public class Manage extends ActionBarActivity {
 						String name = nameEdit.getText().toString();
 						String ip = ipEdit.getText().toString();
 						int port = Integer.parseInt(portEdit.getText().toString());
-						addItem(name);
+						addItem(name, ip, port);
 					}
 				});
 				builder.show();
