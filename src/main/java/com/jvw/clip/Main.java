@@ -80,7 +80,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		ipInfo = (TextView) findViewById(R.id.clip_info_ip_textview);
 		portInfo = (TextView) findViewById(R.id.clip_info_port_textview);
 
-		spinnerData = new ArrayAdapter<DestinationListItem>(this, R.layout.activity_main_spinner);
+		spinnerData = new ArrayAdapter<DestinationListItem>(this, R.layout.spinner_item);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 		spinner.setAdapter(spinnerData);
 		spinner.setOnItemSelectedListener(this);

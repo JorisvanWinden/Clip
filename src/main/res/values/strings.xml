@@ -7,5 +7,6 @@
 	<string name="send">Send!</string>
 	<string name="example_ip">192.168.1.01</string>
 	<string name="title_activity_test">Test</string>
+	<string name="title_activity_manage">Manage</string>
 
 </resources>
