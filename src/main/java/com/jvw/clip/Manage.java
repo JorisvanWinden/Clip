@@ -74,7 +74,12 @@ public class Manage extends ActionBarActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						String name = nameEdit.getText().toString();
 						String ip = ipEdit.getText().toString();
-						int port = Integer.parseInt(portEdit.getText().toString());
+						int port = 60607;
+						try {
+							port = Integer.parseInt(portEdit.getText().toString());
+						} catch (NumberFormatException e) {
+							e.printStackTrace();
+						}
 						addItem(name, ip, port);
 					}
 				});
