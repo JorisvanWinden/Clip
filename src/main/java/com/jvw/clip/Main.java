@@ -2,10 +2,8 @@ package com.jvw.clip;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -18,7 +16,6 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -30,10 +27,6 @@ import java.nio.channels.SocketChannel;
 
 public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
-	public static final int UNABLE_TO_CONNECT = 0;
-	public static final int CLIPBOARD_EMPTY = 1;
-	public static final int CLIPBOARD_SENT = 2;
-	public static final int INVALID_PORT_IP = 3;
 	private ClipboardManager clipBoard;
 	private ArrayAdapter<DestinationListItem> spinnerData;
 	private Spinner spinner;
@@ -42,7 +35,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	private TextView ipInfo;
 	private TextView portInfo;
 
-	public static int send(String ip, int port, int timeout, String msg) {
+	public static Result send(String ip, int port, int timeout, String msg) {
 		try {
 			SocketChannel channel = SocketChannel.open();
 			channel.configureBlocking(false);
@@ -50,14 +43,14 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 				channel.connect(new InetSocketAddress(ip, port));
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
-				return INVALID_PORT_IP;
+				return Result.INVALID_PORT_IP;
 			}
 			try {
 				Thread.sleep(timeout);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			if (!channel.finishConnect()) return UNABLE_TO_CONNECT;
+			if (!channel.finishConnect()) return Result.UNABLE_TO_CONNECT;
 			channel.configureBlocking(true);
 			Socket socket = channel.socket();
 			DataInputStream in = new DataInputStream(socket.getInputStream());
@@ -71,7 +64,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return CLIPBOARD_SENT;
+		return Result.CLIPBOARD_SENT;
 	}
 
 	@Override
@@ -139,10 +132,11 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.clip_send_button:
-				new SendClipboardTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute();
+				new SendToClipboardTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute(clipBoard);
+
 				break;
 			case R.id.clip_info_test_button:
-				new TestDestinationTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute();
+				new TestDestinationTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute(clipBoard);
 				break;
 		}
 	}
@@ -160,91 +154,4 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		infoLayout.setVisibility(View.INVISIBLE);
 	}
 
-	private class SendClipboardTask extends AsyncTask<Void, Void, Integer> {
-
-		private Activity activity;
-		private DestinationListItem destination;
-
-		public SendClipboardTask(Activity a, DestinationListItem destination) {
-			this.activity = a;
-			this.destination = destination;
-			Toast.makeText(activity, "Sending clipboard to " + destination.getName(), Toast.LENGTH_SHORT).show();
-		}
-
-		@Override
-		protected Integer doInBackground(Void... params) {
-			if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
-				if (clipBoard.getPrimaryClip().getItemCount() > 0) {
-					ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
-					String msg = "";
-					if (item.getText() != null) {
-						msg = item.getText().toString();
-					}
-
-					return send(destination.getIp(), destination.getPort(), 2000, msg);
-				}
-			}
-			return CLIPBOARD_EMPTY;
-		}
-
-		@Override
-		protected void onPostExecute(Integer status) {
-			if (status == CLIPBOARD_SENT) {
-				Toast.makeText(activity, "Clipboard sent!", Toast.LENGTH_SHORT).show();
-			} else if (status == UNABLE_TO_CONNECT) {
-				Toast.makeText(activity, "Unable to connect to " + destination.getIp(), Toast.LENGTH_SHORT).show();
-			} else if (status == CLIPBOARD_EMPTY) {
-				Toast.makeText(activity, "Clipboard is empty", Toast.LENGTH_SHORT).show();
-			} else if (status == INVALID_PORT_IP) {
-				Toast.makeText(activity, "Invalid port number or ip address", Toast.LENGTH_SHORT).show();
-			}
-		}
-
-	}
-
-	private class TestDestinationTask extends AsyncTask<Void, Void, Integer> {
-
-		private Activity activity;
-		private DestinationListItem destination;
-
-		public TestDestinationTask(Activity activity, DestinationListItem destination) {
-			this.activity = activity;
-			this.destination = destination;
-		}
-
-		@Override
-		protected Integer doInBackground(Void... params) {
-			return send(destination.getIp(), destination.getPort(), 2000, "Test");
-		}
-
-		@Override
-		protected void onPostExecute(Integer status) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-			if (status == CLIPBOARD_SENT) {
-				builder.setTitle("Server is up and running!");
-				builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-
-					}
-				});
-			} else {
-				builder.setTitle("Unable to connect to server");
-				builder.setPositiveButton("Remove", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						spinnerData.remove(spinnerData.getItem(spinner.getSelectedItemPosition()));
-						spinnerData.notifyDataSetChanged();
-					}
-				});
-				builder.setNegativeButton("Keep", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-
-					}
-				});
-			}
-			builder.show();
-		}
-	}
 }
