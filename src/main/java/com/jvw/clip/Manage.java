@@ -18,6 +18,8 @@ import java.util.List;
 
 public class Manage extends ActionBarActivity {
 
+	// TODO Store data from this activity in database and make Main pull from it
+
 	private ViewGroup layout;
 	private List<DestinationListItem> data = new ArrayList<DestinationListItem>();
 
