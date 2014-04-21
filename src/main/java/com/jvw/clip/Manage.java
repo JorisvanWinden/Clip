@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 public class Manage extends ActionBarActivity {
 
-	ServerHelper data;
+	ServerDataBase data;
 	private ViewGroup layout;
 
 	@Override
@@ -24,7 +24,7 @@ public class Manage extends ActionBarActivity {
 		setContentView(R.layout.activity_manage);
 
 		layout = (ViewGroup) findViewById(R.id.manage_layout);
-		data = new ServerHelper(this);
+		data = new ServerDataBase(this);
 
 	}
 

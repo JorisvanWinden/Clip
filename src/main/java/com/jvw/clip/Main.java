@@ -32,7 +32,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	private TextView nameInfo;
 	private TextView ipInfo;
 	private TextView portInfo;
-	private ServerHelper data;
+	private ServerDataBase data;
 
 	public static Result send(String ip, int port, int timeout, String msg) {
 		try {
@@ -79,7 +79,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		ipInfo = (TextView) findViewById(R.id.clip_info_ip_textview);
 		portInfo = (TextView) findViewById(R.id.clip_info_port_textview);
 
-		data = new ServerHelper(this);
+		data = new ServerDataBase(this);
 		spinnerData = new ArrayAdapter<Server>(this, R.layout.spinner_item);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 		spinner.setAdapter(spinnerData);

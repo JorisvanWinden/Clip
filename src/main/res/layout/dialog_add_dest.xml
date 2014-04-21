@@ -10,15 +10,17 @@
 		android:id="@+id/add_dest_name_edittext"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:hint="John's PC"/>
+		android:hint="John's PC"
+		android:inputType="textPersonName"/>
 
 	<EditText
 		android:id="@+id/add_dest_ip_edittext"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
+		android:digits="0123456789."
 		android:ems="10"
 		android:hint="@string/example_ip"
-		android:inputType="text"/>
+		android:inputType="phone"/>
 
 	<EditText
 		android:id="@+id/add_dest_port_edittext"
