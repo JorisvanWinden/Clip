@@ -1,7 +1,10 @@
 package com.jvw.clip;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -23,8 +27,10 @@ import java.net.Socket;
 import java.nio.channels.SocketChannel;
 
 
-public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, TaskCallback {
 
+	public static final String SEND_TASK = "send";
+	public static final String TEST_TASK = "test";
 	private ClipboardManager clipBoard;
 	private ArrayAdapter<Server> spinnerData;
 	private Spinner spinner;
@@ -90,8 +96,8 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 		spinnerData.clear();
 		for (Server server : data.getAll()) {
 			spinnerData.add(server);
@@ -118,13 +124,13 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 
 	@Override
 	public void onClick(View v) {
+		Server server = spinnerData.getItem(spinner.getSelectedItemPosition());
 		switch (v.getId()) {
 			case R.id.clip_send_button:
-				new SendToClipboardTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute(clipBoard);
-
+				new SendTask(server, this, SEND_TASK).execute();
 				break;
 			case R.id.clip_info_test_button:
-				new TestDestinationTask(this, spinnerData.getItem(spinner.getSelectedItemPosition())).execute(clipBoard);
+				new SendTask(server, this, TEST_TASK).execute();
 				break;
 		}
 	}
@@ -142,4 +148,69 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		infoLayout.setVisibility(View.INVISIBLE);
 	}
 
+	@Override
+	public void onPreExecute(SendTask task) {
+		switch (task.getTag()) {
+			case SEND_TASK:
+				Toast.makeText(this, "Sending clipboard to " + task.getServer().getName(), Toast.LENGTH_SHORT).show();
+				break;
+			case TEST_TASK:
+				break;
+		}
+	}
+
+	@Override
+	public Result doInBackground(SendTask task) {
+		switch (task.getTag()) {
+			case SEND_TASK:
+				if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
+					if (clipBoard.getPrimaryClip().getItemCount() > 0) {
+						ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
+						String msg = "";
+						if (item.getText() != null) {
+							msg = item.getText().toString();
+						}
+						return Main.send(task.getServer().getIp(), task.getServer().getPort(), 2000, msg);
+					}
+				}
+				return Result.CLIPBOARD_EMPTY;
+			case TEST_TASK:
+				return Main.send(task.getServer().getIp(), task.getServer().getPort(), 2000, "Test");
+			default:
+				return Result.UNABLE_TO_CONNECT;
+		}
+	}
+
+	@Override
+	public void onPostExecute(SendTask task, Result result) {
+		switch (task.getTag()) {
+			case SEND_TASK:
+				if (result == Result.CLIPBOARD_SENT) {
+					Toast.makeText(this, "Clipboard sent!", Toast.LENGTH_SHORT).show();
+				} else if (result == Result.UNABLE_TO_CONNECT) {
+					Toast.makeText(this, "Unable to connect to " + task.getServer().getIp(), Toast.LENGTH_SHORT).show();
+				} else if (result == Result.CLIPBOARD_EMPTY) {
+					Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show();
+				} else if (result == Result.INVALID_PORT_IP) {
+					Toast.makeText(this, "Invalid port number or ip address", Toast.LENGTH_SHORT).show();
+				}
+				break;
+			case TEST_TASK:
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				if (result == Result.CLIPBOARD_SENT) {
+					builder.setTitle("Server is up and running!");
+
+				} else {
+					builder.setTitle("Unable to connect");
+				}
+				builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				});
+				builder.show();
+				break;
+		}
+	}
 }

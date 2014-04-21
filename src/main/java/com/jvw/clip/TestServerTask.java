@@ -9,11 +9,11 @@ import android.os.AsyncTask;
 /**
  * Created by Joris on 20-4-14.
  */
-public class TestDestinationTask extends AsyncTask<ClipboardManager, Void, Result> {
+public class TestServerTask extends AsyncTask<ClipboardManager, Void, Result> {
 	private Activity activity;
 	private Server destination;
 
-	public TestDestinationTask(Activity activity, Server destination) {
+	public TestServerTask(Activity activity, Server destination) {
 		this.activity = activity;
 		this.destination = destination;
 	}

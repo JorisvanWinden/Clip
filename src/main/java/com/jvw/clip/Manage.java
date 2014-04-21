@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class Manage extends ActionBarActivity {
@@ -29,17 +30,11 @@ public class Manage extends ActionBarActivity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
 		for (Server server : data.getAll()) {
 			addView(server.getName(), server.getIp(), server.getPort());
 		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.manage, menu);
-		return true;
 	}
 
 	private void addItem(String name, String ip, int port) {
@@ -63,14 +58,20 @@ public class Manage extends ActionBarActivity {
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.manage, menu);
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.manage_add:
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				final View v = getLayoutInflater().inflate(R.layout.dialog_add_dest, null);
 				final EditText ipEdit = (EditText) v.findViewById(R.id.add_dest_ip_edittext);
 				final EditText nameEdit = (EditText) v.findViewById(R.id.add_dest_name_edittext);
 				final EditText portEdit = (EditText) v.findViewById(R.id.add_dest_port_edittext);
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setTitle("Add ip address");
 				builder.setView(v);
 				builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -82,15 +83,17 @@ public class Manage extends ActionBarActivity {
 				builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						String name = nameEdit.getText().toString();
-						String ip = ipEdit.getText().toString();
-						int port = 60607;
 						try {
-							port = Integer.parseInt(portEdit.getText().toString());
-						} catch (NumberFormatException e) {
-							e.printStackTrace();
+							int port = Integer.parseInt(portEdit.getText().toString());
+							String name = nameEdit.getText().toString();
+							String ip = ipEdit.getText().toString();
+							if (ip.equals("") || name.equals("")) {
+								throw new IllegalArgumentException();
+							}
+							addItem(name, ip, port);
+						} catch (Exception e) {
+							Toast.makeText(Manage.this, "You didn't fill in all fields", Toast.LENGTH_SHORT).show();
 						}
-						addItem(name, ip, port);
 					}
 				});
 				builder.show();
