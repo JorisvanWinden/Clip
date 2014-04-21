@@ -52,9 +52,13 @@ public class ServerDataBase extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		db.delete(
 				TABLE_SERVERS,
-				COLUMN_NAME + "=? AND " + COLUMN_IP + "=? AND " + COLUMN_PORT + "=?",
-				new String[]{item.getName(), item.getIp(), String.valueOf(item.getPort())});
+				COLUMN_NAME + "=? AND " + COLUMN_IP + "=? AND " + COLUMN_PORT + "=?", // _name=? AND _ip=? AND _port=?
+				new String[]{item.getName(), item.getIp(), String.valueOf(item.getPort())}); // name, ip, port
 		db.close();
+	}
+
+	public void removeServer(String name, String ip, int port) {
+		removeServer(new Server(name, ip, port));
 	}
 
 	public Server getServer(int position) {

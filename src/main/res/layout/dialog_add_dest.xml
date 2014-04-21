@@ -10,7 +10,7 @@
 		android:id="@+id/add_dest_name_edittext"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:hint="John's PC"
+		android:hint="@string/name_hint"
 		android:inputType="textPersonName"/>
 
 	<EditText
@@ -19,7 +19,7 @@
 		android:layout_height="wrap_content"
 		android:digits="0123456789."
 		android:ems="10"
-		android:hint="@string/example_ip"
+		android:hint="@string/ip_hint"
 		android:inputType="phone"/>
 
 	<EditText
@@ -27,6 +27,6 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:ems="10"
-		android:hint="60607"
+		android:hint="@string/port_hint"
 		android:inputType="number"/>
 </LinearLayout>

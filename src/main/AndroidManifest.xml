@@ -20,13 +20,6 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="com.jvw.clip.Test"
-			android:label="@string/title_activity_test">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value="com.jvw.clip.Main"/>
-		</activity>
-		<activity
 			android:name="com.jvw.clip.Manage"
 			android:label="@string/title_activity_manage">
 		</activity>

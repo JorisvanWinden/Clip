@@ -30,6 +30,10 @@ android {
 			jniDebugBuild false
 		}
 	}
+
+	lintOptions {
+		abortOnError false
+	}
 }
 
 dependencies {

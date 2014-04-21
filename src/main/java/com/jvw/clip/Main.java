@@ -54,7 +54,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 			Socket socket = channel.socket();
 			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			boolean result = in.readBoolean();
+			in.readBoolean();
 			out.writeUTF(msg);
 			in.close();
 			out.close();

@@ -21,11 +21,11 @@ public class Manage extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_manage);
 
 		layout = (ViewGroup) findViewById(R.id.manage_layout);
 		data = new ServerDataBase(this);
-
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class Manage extends ActionBarActivity {
 			public void onClick(View v) {
 				int position = layout.indexOfChild(view);
 				layout.removeViewAt(position);
-				data.removeServer(new Server(name, ip, port));
+				data.removeServer(name, ip, port);
 			}
 		});
 		layout.addView(view, 0);
