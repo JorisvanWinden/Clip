@@ -1,9 +1,8 @@
 package com.jvw.clip;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ClipboardManager;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -80,7 +78,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		ipInfo = (TextView) findViewById(R.id.clip_info_ip_textview);
 		portInfo = (TextView) findViewById(R.id.clip_info_port_textview);
 
-		spinnerData = new ArrayAdapter<DestinationListItem>(this, R.layout.activity_main_spinner);
+		spinnerData = new ArrayAdapter<DestinationListItem>(this, R.layout.spinner_item);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 		spinner.setAdapter(spinnerData);
 		spinner.setOnItemSelectedListener(this);
@@ -98,30 +96,9 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.clip_add_menu:
-				final View v = getLayoutInflater().inflate(R.layout.dialog_add_dest, null);
-				final EditText ipEdit = (EditText) v.findViewById(R.id.add_dest_ip_edittext);
-				final EditText nameEdit = (EditText) v.findViewById(R.id.add_dest_name_edittext);
-				final EditText portEdit = (EditText) v.findViewById(R.id.add_dest_port_edittext);
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle("Add ip address");
-				builder.setView(v);
-				builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-
-					}
-				});
-				builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						String name = nameEdit.getText().toString();
-						String ip = ipEdit.getText().toString();
-						int port = Integer.parseInt(portEdit.getText().toString());
-						spinnerData.add(new DestinationListItem(name, ip, port));
-					}
-				});
-				builder.show();
+			case R.id.clip_manage:
+				Intent intent = new Intent(this, Manage.class);
+				startActivity(intent);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
