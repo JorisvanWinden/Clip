@@ -12,16 +12,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class Manage extends ActionBarActivity {
 
-	// TODO Store data from this activity in database and make Main pull from it
-
+	ServerDataBase data;
 	private ViewGroup layout;
-	private List<DestinationListItem> data = new ArrayList<DestinationListItem>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +24,17 @@ public class Manage extends ActionBarActivity {
 		setContentView(R.layout.activity_manage);
 
 		layout = (ViewGroup) findViewById(R.id.manage_layout);
+		data = new ServerDataBase(this);
+
 	}
 
+	@Override
+	protected void onResume() {
+		super.onResume();
+		for (Server server : data.getAll()) {
+			addView(server.getName(), server.getIp(), server.getPort());
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -39,6 +43,11 @@ public class Manage extends ActionBarActivity {
 	}
 
 	private void addItem(String name, String ip, int port) {
+		addView(name, ip, port);
+		data.addServer(new Server(name, ip, port));
+	}
+
+	private void addView(final String name, final String ip, final int port) {
 		final ViewGroup view = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.manage_item, layout, false);
 		((TextView) view.findViewById(R.id.manage_name_textview)).setText(name);
 		((TextView) view.findViewById(R.id.manage_ip_port_textview)).setText(ip + ":" + port);
@@ -47,10 +56,9 @@ public class Manage extends ActionBarActivity {
 			public void onClick(View v) {
 				int position = layout.indexOfChild(view);
 				layout.removeViewAt(position);
-				data.remove(position);
+				data.removeServer(new Server(name, ip, port));
 			}
 		});
-		data.add(new DestinationListItem(name, ip, port));
 		layout.addView(view, 0);
 	}
 

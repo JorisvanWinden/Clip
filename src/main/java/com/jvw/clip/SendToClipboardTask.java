@@ -11,9 +11,9 @@ import android.widget.Toast;
  */
 public class SendToClipboardTask extends AsyncTask<ClipboardManager, Void, Result> {
 	private Activity activity;
-	private DestinationListItem destination;
+	private Server destination;
 
-	public SendToClipboardTask(Activity a, DestinationListItem destination) {
+	public SendToClipboardTask(Activity a, Server destination) {
 		this.activity = a;
 		this.destination = destination;
 		Toast.makeText(activity, "Sending clipboard to " + destination.getName(), Toast.LENGTH_SHORT).show();
