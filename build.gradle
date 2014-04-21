@@ -6,11 +6,12 @@ buildscript {
 		classpath 'com.android.tools.build:gradle:0.9.+'
 	}
 }
-apply plugin: 'android'
 
 repositories {
 	mavenCentral()
 }
+
+apply plugin: 'android'
 
 android {
 	compileSdkVersion 19
@@ -29,10 +30,6 @@ android {
 			debuggable false
 			jniDebugBuild false
 		}
-	}
-
-	lintOptions {
-		abortOnError false
 	}
 }
 

@@ -3,6 +3,7 @@ package com.jvw.clip;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,9 +22,8 @@ public class Manage extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_manage);
-
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		layout = (ViewGroup) findViewById(R.id.manage_layout);
 		data = new ServerDataBase(this);
 	}
@@ -94,6 +94,9 @@ public class Manage extends ActionBarActivity {
 					}
 				});
 				builder.show();
+				return true;
+			case android.R.id.home:
+				NavUtils.navigateUpFromSameTask(this);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);

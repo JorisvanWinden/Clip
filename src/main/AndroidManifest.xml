@@ -22,6 +22,9 @@
 		<activity
 			android:name="com.jvw.clip.Manage"
 			android:label="@string/title_activity_manage">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value="com.jvw.clip.Main"/>
 		</activity>
 	</application>
 
