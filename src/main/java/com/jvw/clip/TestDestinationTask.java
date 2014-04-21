@@ -11,9 +11,9 @@ import android.os.AsyncTask;
  */
 public class TestDestinationTask extends AsyncTask<ClipboardManager, Void, Result> {
 	private Activity activity;
-	private DestinationListItem destination;
+	private Server destination;
 
-	public TestDestinationTask(Activity activity, DestinationListItem destination) {
+	public TestDestinationTask(Activity activity, Server destination) {
 		this.activity = activity;
 		this.destination = destination;
 	}

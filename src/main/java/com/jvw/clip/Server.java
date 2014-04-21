@@ -3,12 +3,12 @@ package com.jvw.clip;
 /**
  * Created by Joris on 18-4-14.
  */
-public class DestinationListItem {
+public class Server {
 	private String name;
 	private String ip;
 	private int port;
 
-	public DestinationListItem(String name, String ip, int port) {
+	public Server(String name, String ip, int port) {
 		this.name = name;
 		this.ip = ip;
 		this.port = port;

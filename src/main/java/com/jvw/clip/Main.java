@@ -26,12 +26,13 @@ import java.nio.channels.SocketChannel;
 public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
 	private ClipboardManager clipBoard;
-	private ArrayAdapter<DestinationListItem> spinnerData;
+	private ArrayAdapter<Server> spinnerData;
 	private Spinner spinner;
 	private RelativeLayout infoLayout;
 	private TextView nameInfo;
 	private TextView ipInfo;
 	private TextView portInfo;
+	private ServerHelper data;
 
 	public static Result send(String ip, int port, int timeout, String msg) {
 		try {
@@ -78,13 +79,23 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		ipInfo = (TextView) findViewById(R.id.clip_info_ip_textview);
 		portInfo = (TextView) findViewById(R.id.clip_info_port_textview);
 
-		spinnerData = new ArrayAdapter<DestinationListItem>(this, R.layout.spinner_item);
+		data = new ServerHelper(this);
+		spinnerData = new ArrayAdapter<Server>(this, R.layout.spinner_item);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 		spinner.setAdapter(spinnerData);
 		spinner.setOnItemSelectedListener(this);
-		spinnerData.add(new DestinationListItem("Pc Joris", "192.168.1.39", 60607));
+
 		send.setOnClickListener(this);
 		test.setOnClickListener(this);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		spinnerData.clear();
+		for (Server server : data.getAll()) {
+			spinnerData.add(server);
+		}
 	}
 
 	@Override
@@ -120,7 +131,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		DestinationListItem item = spinnerData.getItem(position);
+		Server item = spinnerData.getItem(position);
 		nameInfo.setText("Name: " + item.getName());
 		ipInfo.setText("IP: " + item.getIp());
 		portInfo.setText("Port: " + item.getPort());
