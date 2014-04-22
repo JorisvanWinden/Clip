@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -89,6 +90,18 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		spinner.setOnItemSelectedListener(this);
 		send.setOnClickListener(this);
 		test.setOnClickListener(this);
+
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			String name = extras.getString(SendWidgetConfigureActivity.NAME, "");
+			String ip = extras.getString(SendWidgetConfigureActivity.IP, "");
+			int port = extras.getInt(SendWidgetConfigureActivity.PORT, 0);
+			if (!(name.equals("") || ip.equals("") || port == 0)) {
+				new SendTask(new Server(name, ip, port), this, SEND_TASK).execute();
+			} else {
+				Log.d("CLIP", "wtf is going on");
+			}
+		}
 	}
 
 	@Override
@@ -99,6 +112,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		for (Server server : data.getAll()) {
 			spinnerData.add(server);
 		}
+
 	}
 
 	@Override

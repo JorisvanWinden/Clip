@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -18,7 +17,10 @@ import android.widget.Spinner;
  */
 public class SendWidgetConfigureActivity extends Activity implements View.OnClickListener {
 
-	public static final String PORT_IP = "send_port_ip";
+	public static final String NAME = "send_name";
+	public static final String IP = "send_ip";
+	public static final String PORT = "send_port";
+
 	private static ServerDataBase data;
 	private ArrayAdapter<Server> adapter;
 	private Spinner spinner;
@@ -43,7 +45,6 @@ public class SendWidgetConfigureActivity extends Activity implements View.OnClic
 			widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 		}
 		if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-			Log.d("CLIP", "finish early");
 			finish();
 		}
 
@@ -51,14 +52,16 @@ public class SendWidgetConfigureActivity extends Activity implements View.OnClic
 
 	@Override
 	public void onClick(View v) {
-		Log.d("CLIP", "onClick called");
 		RemoteViews views = new RemoteViews(getPackageName(), R.layout.send_widget);
 
 
-		Intent intent = new Intent(this, Main.class);
 		Server server = adapter.getItem(spinner.getSelectedItemPosition());
-		intent.putExtra(PORT_IP, server.getIp() + ":" + server.getPort());
-		PendingIntent pending = PendingIntent.getActivity(this, 0, intent, 0);
+		Intent intent = new Intent(this, Main.class);
+
+		intent.putExtra(NAME, server.getName());
+		intent.putExtra(IP, server.getIp());
+		intent.putExtra(PORT, server.getPort());
+		PendingIntent pending = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		views.setOnClickPendingIntent(R.id.widget_send_button, pending);
 		views.setTextViewText(R.id.widget_send_button, "Send to " + server.getName());
