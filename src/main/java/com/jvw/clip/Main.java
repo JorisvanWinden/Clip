@@ -19,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -58,11 +57,8 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 			if (!channel.finishConnect()) return Result.UNABLE_TO_CONNECT;
 			channel.configureBlocking(true);
 			Socket socket = channel.socket();
-			DataInputStream in = new DataInputStream(socket.getInputStream());
 			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-			in.readBoolean();
 			out.writeUTF(msg);
-			in.close();
 			out.close();
 			socket.close();
 			channel.close();
@@ -88,9 +84,9 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		data = new ServerDataBase(this);
 		spinnerData = new ArrayAdapter<Server>(this, R.layout.spinner_item);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
+
 		spinner.setAdapter(spinnerData);
 		spinner.setOnItemSelectedListener(this);
-
 		send.setOnClickListener(this);
 		test.setOnClickListener(this);
 	}
@@ -99,6 +95,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	protected void onStart() {
 		super.onStart();
 		spinnerData.clear();
+		// reload server spinner
 		for (Server server : data.getAll()) {
 			spinnerData.add(server);
 		}
@@ -150,67 +147,61 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 
 	@Override
 	public void onPreExecute(SendTask task) {
-		switch (task.getTag()) {
-			case SEND_TASK:
-				Toast.makeText(this, "Sending clipboard to " + task.getServer().getName(), Toast.LENGTH_SHORT).show();
-				break;
-			case TEST_TASK:
-				break;
+		if (task.getTag().equals(SEND_TASK)) {
+			Toast.makeText(this, "Sending clipboard to " + task.getServer().getName(), Toast.LENGTH_SHORT).show();
+
 		}
 	}
 
 	@Override
 	public Result doInBackground(SendTask task) {
-		switch (task.getTag()) {
-			case SEND_TASK:
-				if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
-					if (clipBoard.getPrimaryClip().getItemCount() > 0) {
-						ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
-						String msg = "";
-						if (item.getText() != null) {
-							msg = item.getText().toString();
-						}
-						return Main.send(task.getServer().getIp(), task.getServer().getPort(), 2000, msg);
+		if (task.getTag().equals(SEND_TASK)) {
+			if (clipBoard.hasPrimaryClip() && clipBoard.getPrimaryClip() != null) {
+				if (clipBoard.getPrimaryClip().getItemCount() > 0) {
+					ClipData.Item item = clipBoard.getPrimaryClip().getItemAt(0);
+					String msg = "";
+					if (item.getText() != null) {
+						msg = item.getText().toString();
 					}
+					return Main.send(task.getServer().getIp(), task.getServer().getPort(), 2000, msg);
 				}
-				return Result.CLIPBOARD_EMPTY;
-			case TEST_TASK:
-				return Main.send(task.getServer().getIp(), task.getServer().getPort(), 2000, "Test");
-			default:
-				return Result.UNABLE_TO_CONNECT;
+			}
+			return Result.CLIPBOARD_EMPTY;
+		} else if (task.getTag().equals(TEST_TASK)) {
+			return Main.send(task.getServer().getIp(), task.getServer().getPort(), 2000, "Test");
+		} else {
+			return Result.UNABLE_TO_CONNECT;
 		}
 	}
 
 	@Override
 	public void onPostExecute(SendTask task, Result result) {
-		switch (task.getTag()) {
-			case SEND_TASK:
-				if (result == Result.CLIPBOARD_SENT) {
-					Toast.makeText(this, "Clipboard sent!", Toast.LENGTH_SHORT).show();
-				} else if (result == Result.UNABLE_TO_CONNECT) {
-					Toast.makeText(this, "Unable to connect to " + task.getServer().getIp(), Toast.LENGTH_SHORT).show();
-				} else if (result == Result.CLIPBOARD_EMPTY) {
-					Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show();
-				} else if (result == Result.INVALID_PORT_IP) {
-					Toast.makeText(this, "Invalid port number or ip address", Toast.LENGTH_SHORT).show();
-				}
-				break;
-			case TEST_TASK:
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				if (result == Result.CLIPBOARD_SENT) {
-					builder.setTitle("Server is up and running!");
+		if (task.getTag().equals(SEND_TASK)) {
+			if (result == Result.CLIPBOARD_SENT) {
+				Toast.makeText(this, "Clipboard sent!", Toast.LENGTH_SHORT).show();
+			} else if (result == Result.UNABLE_TO_CONNECT) {
+				Toast.makeText(this, "Unable to connect to " + task.getServer().getIp(), Toast.LENGTH_SHORT).show();
+			} else if (result == Result.CLIPBOARD_EMPTY) {
+				Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show();
+			} else if (result == Result.INVALID_PORT_IP) {
+				Toast.makeText(this, "Invalid port number or ip address", Toast.LENGTH_SHORT).show();
+			}
 
-				} else {
-					builder.setTitle("Unable to connect");
-				}
-				builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+		} else if (task.getTag().equals(TEST_TASK)) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			if (result == Result.CLIPBOARD_SENT) {
+				builder.setTitle("Server is up and running!");
 
-					}
-				});
-				builder.show();
-				break;
+			} else {
+				builder.setTitle("Unable to connect");
+			}
+			builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+
+				}
+			});
+			builder.show();
 		}
 	}
 }

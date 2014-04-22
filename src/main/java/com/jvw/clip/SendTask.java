@@ -11,7 +11,7 @@ public class SendTask extends AsyncTask<Void, Void, Result> {
 	private TaskCallback callback;
 
 	public SendTask(Server server, TaskCallback callback, String tag) {
-		this.server = this.server;
+		this.server = server;
 		this.callback = callback;
 		this.tag = tag;
 	}

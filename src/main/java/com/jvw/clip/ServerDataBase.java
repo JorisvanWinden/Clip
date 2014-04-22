@@ -38,7 +38,7 @@ public class ServerDataBase extends SQLiteOpenHelper {
 		onCreate(db);
 	}
 
-	public void addServer(Server item) {
+	public void add(Server item) {
 		SQLiteDatabase db = getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(ServerDataBase.COLUMN_NAME, item.getName());
@@ -48,7 +48,7 @@ public class ServerDataBase extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	public void removeServer(Server item) {
+	public void remove(Server item) {
 		SQLiteDatabase db = getWritableDatabase();
 		db.delete(
 				TABLE_SERVERS,
@@ -57,11 +57,21 @@ public class ServerDataBase extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	public void removeServer(String name, String ip, int port) {
-		removeServer(new Server(name, ip, port));
+	public void remove(String name, String ip, int port) {
+		remove(new Server(name, ip, port));
 	}
 
-	public Server getServer(int position) {
+	public void remove(int id) {
+		SQLiteDatabase db = getWritableDatabase();
+		db.delete(
+				TABLE_SERVERS,
+				COLUMN_ID + "=?",
+				new String[]{String.valueOf(id)}
+		);
+		db.close();
+	}
+
+	public Server get(int position) {
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cursor = db.query(
 				TABLE_SERVERS,
@@ -91,5 +101,30 @@ public class ServerDataBase extends SQLiteOpenHelper {
 		db.close();
 		cursor.close();
 		return servers;
+	}
+
+	public int getCount() {
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor cursor = db.query(TABLE_SERVERS,
+				new String[]{COLUMN_ID},
+				null,
+				null,
+				null, null, null, null);
+		int count = cursor.getCount();
+		db.close();
+		cursor.close();
+		return count;
+	}
+
+	public int getId(Server server) {
+		SQLiteDatabase db = getReadableDatabase();
+		Cursor cursor = db.query(
+				TABLE_SERVERS,
+				new String[]{COLUMN_ID},
+				COLUMN_NAME + "=? AND " + COLUMN_IP + "=? AND " + COLUMN_PORT + "=?",
+				new String[]{server.getName(), server.getIp(), String.valueOf(server.getPort())},
+				null, null, null, null
+		);
+		return cursor.getInt(0);
 	}
 }

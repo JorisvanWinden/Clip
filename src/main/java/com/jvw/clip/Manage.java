@@ -17,7 +17,7 @@ import android.widget.Toast;
 
 public class Manage extends ActionBarActivity {
 
-	ServerDataBase data;
+	private ServerDataBase data;
 	private ViewGroup layout;
 
 	@Override
@@ -26,6 +26,7 @@ public class Manage extends ActionBarActivity {
 		setContentView(R.layout.activity_manage);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		layout = (ViewGroup) findViewById(R.id.manage_layout);
+
 		data = new ServerDataBase(this);
 	}
 
@@ -39,7 +40,7 @@ public class Manage extends ActionBarActivity {
 
 	private void addItem(String name, String ip, int port) {
 		addView(name, ip, port);
-		data.addServer(new Server(name, ip, port));
+		data.add(new Server(name, ip, port));
 	}
 
 	private void addView(final String name, final String ip, final int port) {
@@ -51,7 +52,7 @@ public class Manage extends ActionBarActivity {
 			public void onClick(View v) {
 				int position = layout.indexOfChild(view);
 				layout.removeViewAt(position);
-				data.removeServer(name, ip, port);
+				data.remove(name, ip, port);
 			}
 		});
 		layout.addView(view, 0);
@@ -68,7 +69,7 @@ public class Manage extends ActionBarActivity {
 		switch (item.getItemId()) {
 			case R.id.manage_add:
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				final View v = getLayoutInflater().inflate(R.layout.dialog_add_dest, null);
+				final View v = LayoutInflater.from(this).inflate(R.layout.dialog_add_dest, null);
 				final EditText ipEdit = (EditText) v.findViewById(R.id.add_dest_ip_edittext);
 				final EditText nameEdit = (EditText) v.findViewById(R.id.add_dest_name_edittext);
 				final EditText portEdit = (EditText) v.findViewById(R.id.add_dest_port_edittext);
