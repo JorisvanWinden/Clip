@@ -9,54 +9,26 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
 public class Manage extends ActionBarActivity {
 
-	private ServerDataBase data;
-	private ViewGroup layout;
+	private ServerAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_manage);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		layout = (ViewGroup) findViewById(R.id.manage_layout);
 
-		data = new ServerDataBase(this);
+		adapter = new ServerAdapter(this);
+		ListView list = (ListView) findViewById(R.id.manage_list_view);
+		list.setAdapter(adapter);
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		for (Server server : data.getAll()) {
-			addView(server.getName(), server.getIp(), server.getPort());
-		}
-	}
-
-	private void addItem(String name, String ip, int port) {
-		addView(name, ip, port);
-		data.add(new Server(name, ip, port));
-	}
-
-	private void addView(final String name, final String ip, final int port) {
-		final ViewGroup view = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.manage_item, layout, false);
-		((TextView) view.findViewById(R.id.manage_name_textview)).setText(name);
-		((TextView) view.findViewById(R.id.manage_ip_port_textview)).setText(ip + ":" + port);
-		view.findViewById(R.id.manage_remove_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				int position = layout.indexOfChild(view);
-				layout.removeViewAt(position);
-				data.remove(name, ip, port);
-			}
-		});
-		layout.addView(view, 0);
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,7 +63,7 @@ public class Manage extends ActionBarActivity {
 							if (ip.equals("") || name.equals("")) {
 								throw new IllegalArgumentException();
 							}
-							addItem(name, ip, port);
+							adapter.add(new Server(name, ip, port));
 						} catch (Exception e) {
 							Toast.makeText(Manage.this, "You didn't fill in all fields", Toast.LENGTH_SHORT).show();
 						}

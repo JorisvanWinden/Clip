@@ -14,7 +14,6 @@ import android.widget.TextView;
 public class ServerAdapter extends BaseAdapter {
 
 	private Context context;
-	//private List<Server> data;
 	private ServerDataBase data;
 
 	public ServerAdapter(Context context) {
@@ -51,8 +50,10 @@ public class ServerAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
 		// may produce some errors
+		// UPDATE it did
+		// no errors when null is passed in as parent ghehehe
 		if (v == null) {
-			v = LayoutInflater.from(context).inflate(R.layout.manage_item, parent);
+			v = LayoutInflater.from(context).inflate(R.layout.manage_item, parent, false);
 			ViewHolder holder = new ViewHolder();
 			holder.name = (TextView) v.findViewById(R.id.manage_name_textview);
 			holder.ip_port = (TextView) v.findViewById(R.id.manage_ip_port_textview);
@@ -68,11 +69,8 @@ public class ServerAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				remove(server);
-				notifyDataSetChanged();
 			}
 		});
-
-
 		return v;
 	}
 

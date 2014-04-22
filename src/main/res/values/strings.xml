@@ -11,5 +11,8 @@
 	<string name="content_description">Remove button image</string>
 	<string name="manage">Add/Remove</string>
 	<string name="add">Add Server</string>
+	<string name="appwidget_text">EXAMPLE</string>
+	<string name="configure">Configure</string>
+	<string name="add_widget">Add widget</string>
 
 </resources>
