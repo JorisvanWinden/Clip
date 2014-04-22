@@ -12,8 +12,8 @@ import android.widget.RemoteViews;
  */
 public class SendWidget extends AppWidgetProvider {
 
-	public static void updateWidget(Context context, AppWidgetManager manager, int widgetId) {
-		manager.updateAppWidget(widgetId, new RemoteViews(context.getPackageName(), R.layout.send_widget));
+	public static void updateWidget(Context context, AppWidgetManager manager, int widgetId, RemoteViews views) {
+		manager.updateAppWidget(widgetId, views);
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class SendWidget extends AppWidgetProvider {
 		final int N = appWidgetIds.length;
 		for (int i = 0; i < N; i++) {
 			int id = appWidgetIds[i];
-			updateWidget(context, appWidgetManager, id);
+			//updateWidget(context, appWidgetManager, id);
 		}
 	}
 }

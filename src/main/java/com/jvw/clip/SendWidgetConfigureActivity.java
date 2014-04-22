@@ -51,7 +51,6 @@ public class SendWidgetConfigureActivity extends Activity implements View.OnClic
 	@Override
 	public void onClick(View v) {
 		Log.d("CLIP", "onClick called");
-		AppWidgetManager manager = AppWidgetManager.getInstance(this);
 		RemoteViews views = new RemoteViews(getPackageName(), R.layout.send_widget);
 
 
@@ -61,7 +60,7 @@ public class SendWidgetConfigureActivity extends Activity implements View.OnClic
 		views.setOnClickPendingIntent(R.id.widget_send_button, pending);
 		views.setTextViewText(R.id.widget_send_button, "Send to " + adapter.getItem(spinner.getSelectedItemPosition()).getName());
 
-		SendWidget.updateWidget(this, manager, widgetId);
+		SendWidget.updateWidget(this, AppWidgetManager.getInstance(this), widgetId, views);
 
 		Intent result = new Intent();
 		result.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
