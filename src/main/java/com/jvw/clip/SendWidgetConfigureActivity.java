@@ -18,6 +18,7 @@ import android.widget.Spinner;
  */
 public class SendWidgetConfigureActivity extends Activity implements View.OnClickListener {
 
+	public static final String PORT_IP = "send_port_ip";
 	private static ServerDataBase data;
 	private ArrayAdapter<Server> adapter;
 	private Spinner spinner;
@@ -55,12 +56,14 @@ public class SendWidgetConfigureActivity extends Activity implements View.OnClic
 
 
 		Intent intent = new Intent(this, Main.class);
+		Server server = adapter.getItem(spinner.getSelectedItemPosition());
+		intent.putExtra(PORT_IP, server.getIp() + ":" + server.getPort());
 		PendingIntent pending = PendingIntent.getActivity(this, 0, intent, 0);
 
 		views.setOnClickPendingIntent(R.id.widget_send_button, pending);
-		views.setTextViewText(R.id.widget_send_button, "Send to " + adapter.getItem(spinner.getSelectedItemPosition()).getName());
+		views.setTextViewText(R.id.widget_send_button, "Send to " + server.getName());
 
-		SendWidget.updateWidget(this, AppWidgetManager.getInstance(this), widgetId, views);
+		AppWidgetManager.getInstance(this).updateAppWidget(widgetId, views);
 
 		Intent result = new Intent();
 		result.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId);
