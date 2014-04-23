@@ -164,7 +164,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	@Override
 	public void onPreExecute(SendTask task) {
 		if (task.getTag().equals(SEND_TASK)) {
-			Crouton.makeText(this, "Sending clipboard to" + task.getServer().getName(), Style.INFO).show();
+			Crouton.makeText(this, "Sending clipboard to " + task.getServer().getName(), Style.INFO).show();
 		}
 	}
 
