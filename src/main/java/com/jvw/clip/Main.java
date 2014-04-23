@@ -18,13 +18,15 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.SocketChannel;
+
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
 
 
 public class Main extends ActionBarActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, TaskCallback {
@@ -162,8 +164,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	@Override
 	public void onPreExecute(SendTask task) {
 		if (task.getTag().equals(SEND_TASK)) {
-			Toast.makeText(this, "Sending clipboard to " + task.getServer().getName(), Toast.LENGTH_SHORT).show();
-
+			Crouton.makeText(this, "Sending clipboard to" + task.getServer().getName(), Style.INFO).show();
 		}
 	}
 
@@ -192,13 +193,13 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	public void onPostExecute(SendTask task, Result result) {
 		if (task.getTag().equals(SEND_TASK)) {
 			if (result == Result.CLIPBOARD_SENT) {
-				Toast.makeText(this, "Clipboard sent!", Toast.LENGTH_SHORT).show();
+				Crouton.makeText(this, "Clipboard sent!", Style.CONFIRM).show();
 			} else if (result == Result.UNABLE_TO_CONNECT) {
-				Toast.makeText(this, "Unable to connect to " + task.getServer().getIp(), Toast.LENGTH_SHORT).show();
+				Crouton.makeText(this, "Unable to connect to " + task.getServer().getIp(), Style.ALERT).show();
 			} else if (result == Result.CLIPBOARD_EMPTY) {
-				Toast.makeText(this, "Clipboard is empty", Toast.LENGTH_SHORT).show();
+				Crouton.makeText(this, "Clipboard is empty", Style.ALERT).show();
 			} else if (result == Result.INVALID_PORT_IP) {
-				Toast.makeText(this, "Invalid port number or ip address", Toast.LENGTH_SHORT).show();
+				Crouton.makeText(this, "Invalid port number or ip address", Style.ALERT).show();
 			}
 
 		} else if (task.getTag().equals(TEST_TASK)) {
