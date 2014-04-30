@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.RemoteViews;
 import android.widget.Spinner;
 
+import com.jvw.sqlitehelper.lib.Table;
+
 
 /**
  * The configuration screen for the {@link SendWidget SendWidget} AppWidget.
@@ -21,7 +23,7 @@ public class SendWidgetConfigureActivity extends Activity implements View.OnClic
 	public static final String IP = "send_ip";
 	public static final String PORT = "send_port";
 
-	private static ServerDataBase data;
+	private static Table<Server> data;
 	private ArrayAdapter<Server> adapter;
 	private Spinner spinner;
 	private int widgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
@@ -33,7 +35,7 @@ public class SendWidgetConfigureActivity extends Activity implements View.OnClic
 		setResult(RESULT_CANCELED);
 		spinner = (Spinner) findViewById(R.id.widget_select_spinner);
 		Button add = (Button) findViewById(R.id.widget_add_button);
-		data = new ServerDataBase(this);
+		data = new Table<Server>(this, "servers.db", "servers", Server.class);
 		adapter = new ArrayAdapter<Server>(this, R.layout.spinner_item, data.getAll().toArray(new Server[data.getAll().size()]));
 
 		spinner.setAdapter(adapter);

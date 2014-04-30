@@ -19,6 +19,8 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.jvw.sqlitehelper.lib.Table;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -40,7 +42,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 	private TextView nameInfo;
 	private TextView ipInfo;
 	private TextView portInfo;
-	private ServerDataBase data;
+	private Table<Server> data;
 
 	public static Result send(String ip, int port, int timeout, String msg) {
 		try {
@@ -84,7 +86,7 @@ public class Main extends ActionBarActivity implements View.OnClickListener, Ada
 		ipInfo = (TextView) findViewById(R.id.clip_info_ip_textview);
 		portInfo = (TextView) findViewById(R.id.clip_info_port_textview);
 
-		data = new ServerDataBase(this);
+		data = new Table<Server>(this, "servers.db", "servers", Server.class);
 		spinnerData = new ArrayAdapter<Server>(this, R.layout.spinner_item);
 		clipBoard = (ClipboardManager) getSystemService(Activity.CLIPBOARD_SERVICE);
 

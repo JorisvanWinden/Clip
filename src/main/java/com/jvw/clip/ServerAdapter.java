@@ -8,17 +8,19 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.jvw.sqlitehelper.lib.Table;
+
 /**
  * Created by Joris on 22-4-14.
  */
 public class ServerAdapter extends BaseAdapter {
 
 	private Context context;
-	private ServerDataBase data;
+	private Table<Server> data;
 
 	public ServerAdapter(Context context) {
 		this.context = context;
-		this.data = new ServerDataBase(context);
+		this.data = new Table<Server>(context, "servers.db", "servers", Server.class);
 	}
 
 	public void add(Server server) {

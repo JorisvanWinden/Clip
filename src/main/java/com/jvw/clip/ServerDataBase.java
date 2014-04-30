@@ -71,13 +71,13 @@ public class ServerDataBase extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	public Server get(int position) {
+	public Server get(int id) {
 		SQLiteDatabase db = getReadableDatabase();
 		Cursor cursor = db.query(
 				TABLE_SERVERS,
 				COLUMNS,
 				COLUMN_ID + "=?",
-				new String[]{String.valueOf(position)},
+				new String[]{String.valueOf(id)},
 				null, null, null, null);
 		Server server = new Server(cursor.getString(0), cursor.getString(1), cursor.getInt(2));
 		db.close();
