@@ -11,10 +11,10 @@ import android.content.Context;
  */
 public class SendWidget extends AppWidgetProvider {
 
-	@Override
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		super.onUpdate(context, appWidgetManager, appWidgetIds);
-	}
+    @Override
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
+    }
 }
 
 

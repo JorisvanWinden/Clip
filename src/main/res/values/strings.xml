@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="app_name">Clip</string>
-	<string name="send">Send!</string>
-	<string name="title_activity_manage">Edit Servers</string>
-	<string name="test_connection">Test Connection</string>
-	<string name="name_hint">John\'s PC</string>
-	<string name="ip_hint">192.168.1.12</string>
-	<string name="port_hint">60607</string>
-	<string name="content_description">Remove button image</string>
-	<string name="manage">Add/Remove</string>
-	<string name="add">Add Server</string>
-	<string name="appwidget_text">EXAMPLE</string>
-	<string name="configure">Configure</string>
-	<string name="add_widget">Add widget</string>
+    <string name="app_name">Clip</string>
+    <string name="send">Send!</string>
+    <string name="title_activity_manage">Edit Servers</string>
+    <string name="test_connection">Test Connection</string>
+    <string name="name_hint">John\'s PC</string>
+    <string name="ip_hint">192.168.1.12</string>
+    <string name="port_hint">60607</string>
+    <string name="content_description">Remove button image</string>
+    <string name="manage">Add/Remove</string>
+    <string name="add">Add Server</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>

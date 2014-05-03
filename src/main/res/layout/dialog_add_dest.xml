@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical"
-              android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-	<EditText
-		android:id="@+id/add_dest_name_edittext"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:hint="@string/name_hint"
-		android:inputType="textPersonName"/>
+    <EditText
+        android:id="@+id/add_dest_name_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/name_hint"
+        android:inputType="textPersonName" />
 
-	<EditText
-		android:id="@+id/add_dest_ip_edittext"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:digits="0123456789."
-		android:ems="10"
-		android:hint="@string/ip_hint"
-		android:inputType="phone"/>
+    <EditText
+        android:id="@+id/add_dest_ip_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:digits="0123456789."
+        android:ems="10"
+        android:hint="@string/ip_hint"
+        android:inputType="phone" />
 
-	<EditText
-		android:id="@+id/add_dest_port_edittext"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:ems="10"
-		android:hint="@string/port_hint"
-		android:inputType="number"/>
+    <EditText
+        android:id="@+id/add_dest_port_edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/port_hint"
+        android:inputType="number" />
 </LinearLayout>
